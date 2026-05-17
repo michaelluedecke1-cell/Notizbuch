@@ -3,208 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notizbuch OS - Web Edition</title>
+  <title>WebXR Multi-Notizbuch SmartOS</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2ecc71">
-  
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <style>
-    :root {
-      --bg-dark: #1e1e24;
-      --panel-bg: #2c3e50;
-      --btn-primary: #34495e;
-      --btn-success: #2ecc71;
-      --btn-warning: #f39c12;
-      --btn-danger: #e74c3c;
-      --text-main: #ffffff;
-      --paper-bg: #fcfbe3;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* UNSTYLISH HIDDEN INPUT */
+    body { margin: 0; overflow: hidden; }
     #hidden-file-input { display: none; }
-
-    /* LINKES PANEL: DATEIEN & BACKUP */
-    #sidebar {
-      width: 320px;
-      background-color: var(--panel-bg);
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-      z-index: 10;
-    }
-
-    .sidebar-title {
-      text-align: center;
-      color: #1abc9c;
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 5px;
-      letter-spacing: 1px;
-    }
-
-    .scroll-controls {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-
-    .scroll-btn {
-      background-color: var(--btn-primary);
-      color: white;
-      border: none;
-      padding: 5px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #file-list {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-    }
-
-    .file-item {
-      background-color: var(--btn-primary);
-      padding: 12px;
-      text-align: center;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .file-item.active {
-      background-color: #e67e22;
-      font-weight: bold;
-    }
-
-    .action-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .btn {
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1rem;
-      text-align: center;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover { opacity: 0.9; }
-    .btn-green { background-color: var(--btn-success); }
-    .btn-orange { background-color: var(--btn-warning); }
-    .btn-red { background-color: var(--btn-danger); }
-    
-    .horizontal-split {
-      display: flex;
-      gap: 10px;
-    }
-    .horizontal-split .btn { flex: 1; }
-
-    .divider {
-      height: 2px;
-      background-color: #7f8c8d;
-      margin: 10px 0;
-    }
-
-    /* RECHTES PANEL: DAS NOTIZBUCH */
-    #main-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 40px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #notebook-container {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* DAS DIGITALE PAPIER */
-    #paper {
-      background-color: var(--paper-bg);
-      color: #111;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      height: 60vh;
-    }
-
-    .paper-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
-
-    #current-file-title {
-      font-size: 1.3rem;
-      color: #e67e22;
-      font-weight: bold;
-    }
-
-    #page-number {
-      font-size: 1.1rem;
-      color: #555;
-    }
-
-    /* DAS TEXTFELD (Echte Tastatur-Eingabe!) */
-    #note-textarea {
-      width: 100%;
-      flex-grow: 1;
-      background: transparent;
-      border: none;
-      resize: none;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      font-family: 'Courier New', Courier, monospace;
-      color: #111;
-      outline: none;
-    }
-
-    /* UNTERE NAVIGATION */
-    .nav-controls {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
-    .nav-controls .btn {
-      flex: 1;
-    }
   </style>
-
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
@@ -215,154 +21,304 @@
 
   <input type="file" id="hidden-file-input" accept=".json">
 
-  <div id="sidebar">
-    <div class="sidebar-title">DATEIEN</div>
-    
-    <div class="scroll-controls">
-      <button class="scroll-btn" id="btn-file-up">▲</button>
-      <button class="scroll-btn" id="btn-file-down">▼</button>
-    </div>
+  <a-scene id="scene" webxr="optionalFeatures: passthrough">
+    <a-sky id="environment-sky" color="#1e1e24"></a-sky>
+    <a-grid id="environment-grid" position="0 0 0" material="opacity: 0.2; color: #ffffff"></a-grid>
 
-    <div id="file-list"></div>
+    <a-entity id="rig">
+      <a-camera position="0 1.6 0">
+        <a-cursor id="cursor" color="#ff4a4a" raycaster="objects: .clickable"></a-cursor>
+      </a-camera>
+      <a-entity id="left-hand" laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+      <a-entity id="right-hand" laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
+    </a-entity>
 
-    <div class="action-group">
-      <button class="btn btn-green" id="btn-new-file">+ Neue Datei</button>
-      <div class="horizontal-split">
-        <button class="btn btn-orange" id="btn-rename-file">Name</button>
-        <button class="btn btn-red" id="btn-delete-file">Löschen</button>
-      </div>
-      <div class="divider"></div>
-      <div class="horizontal-split">
-        <button class="btn" style="background-color: #3498db;" id="btn-export">Backup</button>
-        <button class="btn" style="background-color: #2980b9;" id="btn-import">Laden</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="main-content">
-    <div id="notebook-container">
+    <a-entity id="workspace" position="0 1.5 -2.5">
       
-      <div id="paper">
-        <div class="paper-header">
-          <div id="current-file-title">Datei: -</div>
-          <div id="page-number">Seite: 1</div>
-        </div>
-        <textarea id="note-textarea" placeholder="Schreibe hier deine Notizen..."></textarea>
-      </div>
+      <a-entity id="file-manager" position="-1.6 0 0">
+        <a-plane width="0.8" height="1.4" color="#2c3e50" material="roughness: 1">
+          <a-text value="DATEIEN" align="center" position="0 0.58 0.02" width="3" color="#1abc9c"></a-text>
+          
+          <a-plane id="btn-file-up" class="clickable" width="0.2" height="0.08" position="-0.25 0.48 0.02" color="#34495e">
+            <a-text value="^" align="center" position="0 0 0.02" width="3" color="#fff"></a-text>
+          </a-plane>
+          <a-plane id="btn-file-down" class="clickable" width="0.2" height="0.08" position="0.25 0.48 0.02" color="#34495e">
+            <a-text value="v" align="center" position="0 -0.02 0.02" width="3" color="#fff"></a-text>
+          </a-plane>
 
-      <div class="nav-controls">
-        <button class="btn" style="background-color: var(--btn-primary);" id="btn-prev">Zurück</button>
-        <button class="btn btn-red" id="btn-clear">Leeren</button>
-        <button class="btn" style="background-color: var(--btn-primary);" id="btn-next">Weiter</button>
-      </div>
+          <a-entity id="file-list-container" position="0 0.35 0.02"></a-entity>
 
-    </div>
-  </div>
+          <a-plane id="btn-new-file" class="clickable" width="0.7" height="0.10" position="0 -0.15 0.02" color="#2ecc71">
+            <a-text value="+ Neu" align="center" position="0 0 0.02" width="2.5" color="#fff"></a-text>
+          </a-plane>
+          <a-plane id="btn-rename-file" class="clickable" width="0.33" height="0.08" position="-0.185 -0.26 0.02" color="#f39c12">
+            <a-text value="Name" align="center" position="0 0 0.02" width="2" color="#fff"></a-text>
+          </a-plane>
+          <a-plane id="btn-delete-file" class="clickable" width="0.33" height="0.08" position="0.185 -0.26 0.02" color="#c0392b">
+            <a-text value="Loeschen" align="center" position="0 0 0.02" width="2" color="#fff"></a-text>
+          </a-plane>
+
+          <a-plane width="0.7" height="0.005" position="0 -0.34 0.02" color="#7f8c8d"></a-plane>
+
+          <a-plane id="btn-passthrough" class="clickable" width="0.7" height="0.10" position="0 -0.42 0.02" color="#9b59b6">
+            <a-text id="txt-passthrough" value="MR Modus: AUS" align="center" position="0 0 0.02" width="2.2" color="#fff"></a-text>
+          </a-plane>
+          <a-plane id="btn-export" class="clickable" width="0.33" height="0.10" position="-0.185 -0.54 0.02" color="#3498db">
+            <a-text value="Backup" align="center" position="0 0 0.02" width="2" color="#fff"></a-text>
+          </a-plane>
+          <a-plane id="btn-import" class="clickable" width="0.33" height="0.10" position="0.185 -0.54 0.02" color="#2980b9">
+            <a-text value="Laden" align="center" position="0 0 0.02" width="2" color="#fff"></a-text>
+          </a-plane>
+        </a-plane>
+      </a-entity>
+
+      <a-entity id="notebook" position="0.5 0 0">
+        <a-plane id="page-display" width="2.0" height="1.4" color="#fcfbe3" material="roughness: 1">
+          <a-text id="current-file-title" value="Datei: -" position="-0.9 0.55 0.02" color="#e67e22" width="3" anchor="left"></a-text>
+          <a-text id="page-number" value="Seite: 1" position="0.7 0.55 0.02" color="#333" width="2.5" align="right"></a-text>
+          <a-text id="page-text" value="Waehle eine Datei..." position="-0.9 0.3 0.02" color="#111" width="3.8" anchor="left" baseline="top" wrap-count="30"></a-text>
+        </a-plane>
+
+        <a-plane id="btn-prev" class="clickable" width="0.45" height="0.15" position="-0.5 -0.8 0" color="#34495e"><a-text value="Zurueck" align="center" position="0 0 0.02" width="2.5" color="#fff"></a-text></a-plane>
+        <a-plane id="btn-clear" class="clickable" width="0.45" height="0.15" position="0 -0.8 0" color="#e74c3c"><a-text value="Leeren" align="center" position="0 0 0.02" width="2.5" color="#fff"></a-text></a-plane>
+        <a-plane id="btn-next" class="clickable" width="0.45" height="0.15" position="0.5 -0.8 0" color="#34495e"><a-text value="Weiter" align="center" position="0 0 0.02" width="2.5" color="#fff"></a-text></a-plane>
+      </a-entity>
+
+      <a-entity id="keyboard-wrapper" position="0 -1.5 0.2" rotation="-20 0 0">
+        <a-plane id="keyboard-handle" class="clickable" width="1.8" height="0.1" position="0 0.1 0" color="#3498db">
+          <a-text value="::: HALTEN ZUM BEWEGEN :::" align="center" position="0 0 0.02" width="2.5" color="#fff"></a-text>
+        </a-plane>
+        <a-entity id="keyboard-keys"></a-entity>
+      </a-entity>
+
+    </a-entity>
+  </a-scene>
 
   <script>
     let allFiles = JSON.parse(localStorage.getItem('webxr_multifiles')) || {
-      "Willkommen": { 1: "Das ist dein Notizbuch im normalen Browser-Modus!\n\nDu kannst jetzt ganz normal mit deiner echten PC-Tastatur schreiben, Text kopieren oder am Handy tippen.\n\nAlles speichert sich weiterhin vollautomatisch ab!" }
+      "Willkommen": { 1: "Das ist dein voll ausgestattetes WebXR OS Notizbuch!\n\nDie Tastatur schreibt jetzt standardmaessig klein. Nutze die Shift-Taste (Pfeil nach oben), um gross zu schreiben!" }
     };
     
     let currentFileName = Object.keys(allFiles)[0] || "Willkommen";
     let currentPage = 1;
     let fileScrollIndex = 0;
+    let isPassthrough = false;
+    let currentKeyboardLayout = "abc"; // Modi: "abc" (klein), "ABC" (gross), "123" (Sonderzeichen)
 
-    const textarea = document.getElementById('note-textarea');
+    const pageTextField = document.getElementById('page-text');
     const pageNumField = document.getElementById('page-number');
     const fileTitleField = document.getElementById('current-file-title');
-    const fileListContainer = document.getElementById('file-list');
+    const fileListContainer = document.getElementById('file-list-container');
+    const keyboardKeysContainer = document.getElementById('keyboard-keys');
     const fileInput = document.getElementById('hidden-file-input');
 
+    function triggerVibration(evt) {
+      const controller = evt.detail.cursorEl;
+      if (controller && controller.components && controller.components['laser-controls']) {
+        const gamePad = controller.components['laser-controls'].id === 'left-hand' ? 
+          navigator.getGamepads()[0] : navigator.getGamepads()[1];
+        if (gamePad && gamePad.vibrationActuator) {
+          gamePad.vibrationActuator.playEffect("dual-rumble", { duration: 40, strongMagnitude: 0.5 });
+        }
+      }
+    }
+
     function updateDisplay() {
-      fileTitleField.innerText = 'Datei: ' + currentFileName;
-      pageNumField.innerText = 'Seite: ' + currentPage;
-      
+      fileTitleField.setAttribute('value', 'Datei: ' + currentFileName);
+      pageNumField.setAttribute('value', 'Seite: ' + currentPage);
       const currentFileData = allFiles[currentFileName] || {};
-      textarea.value = currentFileData[currentPage] || "";
+      const text = currentFileData[currentPage] || "";
+      
+      pageTextField.setAttribute('value', text.trim() !== "" ? text : 'Diese Seite ist leer...');
+      pageTextField.setAttribute('color', text.trim() !== "" ? '#111' : '#888');
+      
+      const textLength = text.length;
+      let dynamicWidth = 3.8;
+      if (textLength > 120) dynamicWidth = 3.8 + ((textLength - 120) * 0.005);
+      if (dynamicWidth > 4.6) dynamicWidth = 4.6;
+      pageTextField.setAttribute('width', dynamicWidth);
+      
+      const lineCount = text.split('\n').length;
+      if (lineCount > 7) {
+        pageTextField.setAttribute('position', `-0.9 ${0.3 + ((lineCount - 7) * 0.14)} 0.02`);
+      } else {
+        pageTextField.setAttribute('position', "-0.9 0.3 0.02");
+      }
     }
 
     function renderFileList() {
       fileListContainer.innerHTML = "";
       const fileNames = Object.keys(allFiles);
-      const visibleFiles = fileNames.slice(fileScrollIndex, fileScrollIndex + 5);
+      const visibleFiles = fileNames.slice(fileScrollIndex, fileScrollIndex + 3);
       
-      visibleFiles.forEach((name) => {
-        const item = document.createElement('div');
-        item.className = 'file-item' + (name === currentFileName ? ' active' : '');
-        item.innerText = name;
-        
-        item.addEventListener('click', () => {
-          // Vorherige Seite sichern
-          saveCurrentText();
-          currentFileName = name;
-          currentPage = 1;
-          renderFileList();
-          updateDisplay();
+      visibleFiles.forEach((name, index) => {
+        const fileBtn = document.createElement('a-plane');
+        fileBtn.setAttribute('width', '0.7'); fileBtn.setAttribute('height', '0.10');
+        // Das Element selbst leicht vorrücken (z = 0.01)
+        fileBtn.setAttribute('position', `0 ${-index * 0.13} 0.01`);
+        fileBtn.setAttribute('class', 'clickable');
+        fileBtn.setAttribute('color', name === currentFileName ? '#e67e22' : '#34495e');
+
+        const fileText = document.createElement('a-text');
+        fileText.setAttribute('value', name); fileText.setAttribute('align', 'center');
+        // FEHLER-FIX: Den Text noch ein Stück weiter nach vorn setzen (z = 0.03), damit er nie verschwindet
+        fileText.setAttribute('position', '0 0 0.03'); 
+        fileText.setAttribute('width', '2.5'); fileText.setAttribute('color', '#fff');
+
+        fileBtn.appendChild(fileText);
+        fileBtn.addEventListener('click', (e) => {
+          triggerVibration(e);
+          currentFileName = name; currentPage = 1;
+          renderFileList(); updateDisplay();
         });
-        fileListContainer.appendChild(item);
+        fileListContainer.appendChild(fileBtn);
       });
     }
 
-    function saveCurrentText() {
+    function typeCharacter(char) {
       if (!allFiles[currentFileName]) allFiles[currentFileName] = {};
-      allFiles[currentFileName][currentPage] = textarea.value;
-      localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
-    }
+      if (!allFiles[currentFileName][currentPage]) allFiles[currentFileName][currentPage] = "";
 
-    // Beim Tippen sofort automatisch speichern
-    textarea.addEventListener('input', saveCurrentText);
+      let triggeredLayoutChange = false;
 
-    // SCROLLEN IN DER DATEILISTE
-    document.getElementById('btn-file-up').addEventListener('click', () => {
-      if (fileScrollIndex > 0) { fileScrollIndex--; renderFileList(); }
-    });
-    document.getElementById('btn-file-down').addEventListener('click', () => {
-      if (fileScrollIndex < Object.keys(allFiles).length - 5) { fileScrollIndex++; renderFileList(); }
-    });
-
-    // SEITEN BLÄTTERN
-    document.getElementById('btn-next').addEventListener('click', () => {
-      saveCurrentText();
-      currentPage++;
-      updateDisplay();
-    });
-
-    document.getElementById('btn-prev').addEventListener('click', () => {
-      if (currentPage > 1) {
-        saveCurrentText();
-        currentPage--;
-        updateDisplay();
-      }
-    });
-
-    document.getElementById('btn-clear').addEventListener('click', () => {
-      if(confirm("Möchtest du diese Seite wirklich leeren?")) {
-        textarea.value = "";
-        saveCurrentText();
-        updateDisplay();
-      }
-    });
-
-    // NEUE DATEI
-    document.getElementById('btn-new-file').addEventListener('click', () => {
-      saveCurrentText();
-      let name = prompt("Name für neue Datei:", "Notiz_" + (Object.keys(allFiles).length + 1));
-      if (name && name.trim() !== "") {
-        name = name.replace(/[^a-zA-Z0-9_]/g, "_");
-        if (!allFiles[name]) {
-          allFiles[name] = { 1: "" };
-          currentFileName = name;
-          currentPage = 1;
-          localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
-          renderFileList();
-          updateDisplay();
+      if (char === "Leertaste") allFiles[currentFileName][currentPage] += " ";
+      else if (char === "⌫") allFiles[currentFileName][currentPage] = allFiles[currentFileName][currentPage].slice(0, -1);
+      else if (char === "Enter") allFiles[currentFileName][currentPage] += "\n";
+      else if (char === "123") { currentKeyboardLayout = "123"; triggeredLayoutChange = true; }
+      else if (char === "ABC" || char === "abc") { currentKeyboardLayout = "abc"; triggeredLayoutChange = true; }
+      else if (char === "⇧") { currentKeyboardLayout = "ABC"; triggeredLayoutChange = true; }
+      else {
+        allFiles[currentFileName][currentPage] += char;
+        if (currentKeyboardLayout === "ABC") {
+          currentKeyboardLayout = "abc";
+          triggeredLayoutChange = true;
         }
       }
+
+      localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
+      if (triggeredLayoutChange) buildKeyboard();
+      updateDisplay();
+    }
+
+    const layouts = {
+      "abc": [
+        ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "⌫"],
+        ["q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "ue"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l", "oe", "ae"],
+        ["⇧", "y", "x", "c", "v", "b", "n", "m", ",", ".", "Enter"],
+        ["123", "Leertaste"]
+      ],
+      "ABC": [
+        ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "⌫"],
+        ["Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P", "UE"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L", "OE", "AE"],
+        ["abc", "Y", "X", "C", "V", "B", "N", "M", ",", ".", "Enter"],
+        ["123", "Leertaste"]
+      ],
+      "123": [
+        ["!", "\"", "§", "$", "%", "&", "/", "(", ")", "=", "⌫"],
+        ["?", "*", "+", "#", "'", ":", ";", "<", ">", "@", "€"],
+        ["[", "]", "{", "}", "\\", "_", "|", "~", "^", "°", "²"],
+        ["/", "*", "-", "+", "=", "%", "§", ",", ".", "_", "Enter"],
+        ["abc", "Leertaste"]
+      ]
+    };
+
+    function buildKeyboard() {
+      keyboardKeysContainer.innerHTML = "";
+      const rows = layouts[currentKeyboardLayout];
+      rows.forEach((row, rowIndex) => {
+        row.forEach((key, keyIndex) => {
+          const keyEl = document.createElement('a-plane');
+          let width = 0.14, height = 0.11;
+          if (key === "Leertaste") width = 0.7;
+          if (key === "Enter" || key === "⌫") width = 0.22;
+          if (key === "123" || key === "ABC" || key === "abc" || key === "⇧") width = 0.22;
+          let xPos = (keyIndex - (row.length / 2)) * 0.155 + 0.077;
+          if (key === "Leertaste") xPos = 0.2;
+          
+          keyEl.setAttribute('width', width); keyEl.setAttribute('height', height);
+          keyEl.setAttribute('position', `${xPos} ${-rowIndex * 0.13} 0.02`);
+          
+          if (key === "123" || key === "ABC" || key === "abc" || key === "⇧") {
+            keyEl.setAttribute('color', '#9b59b6');
+          } else {
+            keyEl.setAttribute('color', '#2ecc71');
+          }
+          keyEl.setAttribute('class', 'clickable');
+          
+          const textEl = document.createElement('a-text');
+          textEl.setAttribute('value', key); textEl.setAttribute('align', 'center');
+          textEl.setAttribute('position', '0 0 0.02'); textEl.setAttribute('width', key === "Leertaste" ? '3' : '2.2');
+          textEl.setAttribute('color', '#fff');
+          
+          keyEl.appendChild(textEl);
+          keyEl.addEventListener('click', (e) => { triggerVibration(e); typeCharacter(key); });
+          keyboardKeysContainer.appendChild(keyEl);
+        });
+      });
+    }
+
+    // BEWEGBARE TASTATUR LOGIK
+    let isDragging = false;
+    let dragController = null;
+    const kbWrapper = document.getElementById('keyboard-wrapper');
+    
+    document.getElementById('keyboard-handle').addEventListener('mousedown', (e) => {
+      isDragging = true;
+      dragController = e.detail.cursorEl;
     });
 
-    // UMBENENNEN
-    document.getElementById('btn-rename-file').addEventListener('click', () => {
+    document.querySelector('a-scene').addEventListener('tick', () => {
+      if (isDragging && dragController) {
+        const wpPos = document.getElementById('workspace').object3D.position;
+        const targetPos = dragController.object3D.position;
+        kbWrapper.object3D.position.set(targetPos.x - wpPos.x, targetPos.y - wpPos.y - 0.2, targetPos.z - wpPos.z + 0.3);
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; dragController = null; });
+
+    // PASSTHROUGH (MR MODUS)
+    document.getElementById('btn-passthrough').addEventListener('click', (e) => {
+      triggerVibration(e);
+      isPassthrough = !isPassthrough;
+      const scene = document.getElementById('scene');
+      if (isPassthrough) {
+        scene.setAttribute('webxr', 'optionalFeatures: passthrough');
+        scene.components.webxr.showPassthrough = true;
+        document.getElementById('environment-sky').setAttribute('visible', 'false');
+        document.getElementById('environment-grid').setAttribute('visible', 'false');
+        document.getElementById('txt-passthrough').setAttribute('value', 'MR Modus: AN');
+      } else {
+        document.getElementById('environment-sky').setAttribute('visible', 'true');
+        document.getElementById('environment-grid').setAttribute('visible', 'true');
+        document.getElementById('txt-passthrough').setAttribute('value', 'MR Modus: AUS');
+      }
+    });
+
+    // SCROLLEN IN DER DATEILISTE
+    document.getElementById('btn-file-up').addEventListener('click', (e) => {
+      triggerVibration(e); if (fileScrollIndex > 0) { fileScrollIndex--; renderFileList(); }
+    });
+    document.getElementById('btn-file-down').addEventListener('click', (e) => {
+      triggerVibration(e); if (fileScrollIndex < Object.keys(allFiles).length - 3) { fileScrollIndex++; renderFileList(); }
+    });
+
+    // DATEI LÖSCHEN & UMBENENNEN
+    document.getElementById('btn-delete-file').addEventListener('click', (e) => {
+      triggerVibration(e);
+      if(Object.keys(allFiles).length <= 1) { alert("Du musst mindestens eine Datei behalten!"); return; }
+      if(confirm(`Möchtest du '${currentFileName}' wirklich komplett löschen?`)) {
+        delete allFiles[currentFileName];
+        currentFileName = Object.keys(allFiles)[0]; currentPage = 1;
+        localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
+        renderFileList(); updateDisplay();
+      }
+    });
+
+    document.getElementById('btn-rename-file').addEventListener('click', (e) => {
+      triggerVibration(e);
       let newName = prompt(`Neuer Name für '${currentFileName}':`, currentFileName);
       if (newName && newName.trim() !== "" && newName !== currentFileName) {
         newName = newName.replace(/[^a-zA-Z0-9_]/g, "_");
@@ -370,65 +326,49 @@
         delete allFiles[currentFileName];
         currentFileName = newName;
         localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
-        renderFileList();
-        updateDisplay();
+        renderFileList(); updateDisplay();
       }
     });
 
-    // LÖSCHEN
-    document.getElementById('btn-delete-file').addEventListener('click', () => {
-      if(Object.keys(allFiles).length <= 1) {
-        alert("Du musst mindestens eine Datei behalten!");
-        return;
-      }
-      if(confirm(`Möchtest du '${currentFileName}' wirklich komplett löschen?`)) {
-        delete allFiles[currentFileName];
-        currentFileName = Object.keys(allFiles)[0];
-        currentPage = 1;
-        localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
-        renderFileList();
-        updateDisplay();
-      }
-    });
-
-    // BACKUP (Export)
+    // BACKUP SYSTEM
     document.getElementById('btn-export').addEventListener('click', () => {
-      saveCurrentText();
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allFiles));
-      const dl = document.createElement('a');
-      dl.setAttribute("href", dataStr);
-      dl.setAttribute("download", "notizbuch_backup.json");
-      document.body.appendChild(dl);
-      dl.click();
-      dl.remove();
+      const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "notizbuch_backup.json");
+      document.body.appendChild(dl); dl.click(); dl.remove();
     });
 
-    // BACKUP (Import)
     document.getElementById('btn-import').addEventListener('click', () => { fileInput.click(); });
     fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
           if (typeof imported === 'object' && imported !== null) {
-            allFiles = imported;
-            localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
-            currentFileName = Object.keys(allFiles)[0];
-            currentPage = 1;
-            renderFileList();
-            updateDisplay();
-            alert("Backup erfolgreich geladen!");
+            allFiles = imported; localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles));
+            currentFileName = Object.keys(allFiles)[0]; currentPage = 1;
+            renderFileList(); updateDisplay(); alert("Backup geladen!");
           }
-        } catch (err) { alert("Fehler beim Laden des Backups."); }
+        } catch (err) { alert("Fehler beim Laden."); }
       };
       reader.readAsText(file);
     });
 
-    // Start-Aufruf
-    renderFileList();
-    updateDisplay();
+    // Neue Datei erstellen
+    document.getElementById('btn-new-file').addEventListener('click', () => {
+      let name = prompt("Name für neue Datei:", "Notiz_" + (Object.keys(allFiles).length + 1));
+      if (name && name.trim() !== "") {
+        name = name.replace(/[^a-zA-Z0-9_]/g, "_");
+        if (!allFiles[name]) { allFiles[name] = { 1: "" }; currentFileName = name; currentPage = 1; }
+        localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles)); renderFileList(); updateDisplay();
+      }
+    });
+    
+    document.getElementById('btn-next').addEventListener('click', () => { currentPage++; updateDisplay(); });
+    document.getElementById('btn-prev').addEventListener('click', () => { if (currentPage > 1) { currentPage--; updateDisplay(); } });
+    document.getElementById('btn-clear').addEventListener('click', () => { if(confirm("Seite leeren?")) { allFiles[currentFileName][currentPage] = ""; localStorage.setItem('webxr_multifiles', JSON.stringify(allFiles)); updateDisplay(); } });
+
+    renderFileList(); buildKeyboard(); updateDisplay();
   </script>
 </body>
 </html>
