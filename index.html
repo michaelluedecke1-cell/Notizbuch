@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notizbuch OS - Web Edition</title>
+  <title>Notizbuch OS - Flat Web Edition</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2ecc71">
   
@@ -36,7 +36,7 @@
 
     #hidden-file-input { display: none; }
 
-    /* LINKES PANEL: DATEIEN & BACKUP */
+    /* LINKES PANEL: REINE 2D SIDEBAR */
     #sidebar {
       width: 320px;
       background-color: var(--panel-bg);
@@ -52,7 +52,7 @@
       color: #1abc9c;
       font-size: 1.5rem;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
       letter-spacing: 1px;
     }
 
@@ -68,10 +68,11 @@
       background-color: var(--btn-primary);
       color: white;
       border: none;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 10px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 1rem;
     }
 
     #file-list {
@@ -83,25 +84,30 @@
       margin-bottom: 20px;
     }
 
-    /* DATEINAMEN-STYLING (Jetzt mit weißem Text!) */
+    /* DATEINAMEN-STYLING: Garantiert perfekt lesbar */
     .file-item {
       background-color: var(--btn-primary);
-      color: #ffffff; /* Garantiert weißer Text */
-      padding: 12px;
+      color: #ffffff; /* Strahlend weißer Text */
+      padding: 14px;
       text-align: center;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-weight: 500;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .file-item:hover {
+      background-color: #415b76;
     }
 
     .file-item.active {
       background-color: #e67e22;
-      font-weight: bold;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      border-color: #d35400;
     }
 
     .action-group {
@@ -139,7 +145,7 @@
       margin: 10px 0;
     }
 
-    /* RECHTES PANEL: DAS NOTIZBUCH */
+    /* RECHTES PANEL: REINES SEITEN-LAYOUT */
     #main-content {
       flex-grow: 1;
       display: flex;
@@ -157,7 +163,7 @@
       gap: 20px;
     }
 
-    /* DAS DIGITALE PAPIER */
+    /* DAS DIGITALE PAPIER (Flach, mit Scrollbalken falls nötig) */
     #paper {
       background-color: var(--paper-bg);
       color: #111;
@@ -166,7 +172,7 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      height: 60vh;
+      height: 65vh;
     }
 
     .paper-header {
@@ -179,7 +185,7 @@
     }
 
     #current-file-title {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       color: #e67e22;
       font-weight: bold;
     }
@@ -187,23 +193,23 @@
     #page-number {
       font-size: 1.1rem;
       color: #555;
+      font-weight: bold;
     }
 
-    /* TEXTAREA FÜR NORMALE EINGABE */
+    /* NORMALES TEXTFELD FÜR PC/HANDY-TASTATUR */
     #note-textarea {
       width: 100%;
       flex-grow: 1;
       background: transparent;
       border: none;
       resize: none;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       line-height: 1.6;
       font-family: 'Segoe UI', Arial, sans-serif;
       color: #111;
       outline: none;
     }
 
-    /* NAVI UNTEN */
     .nav-controls {
       display: flex;
       justify-content: space-between;
@@ -213,12 +219,6 @@
       flex: 1;
     }
   </style>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-    }
-  </script>
 </head>
 <body>
 
@@ -270,7 +270,7 @@
 
   <script>
     let allFiles = JSON.parse(localStorage.getItem('webxr_multifiles')) || {
-      "Willkommen": { 1: "Das ist dein Notizbuch im normalen Browser-Modus!\n\nDu kannst jetzt ganz normal mit deiner echten Tastatur schreiben, Text reinkopieren oder am Smartphone tippen.\n\nAlles speichert sich vollautomatisch!" }
+      "Willkommen": { 1: "Das ist dein Notizbuch im reinen Browser-Modus!\n\nDu kannst jetzt ganz normal mit deiner echten Tastatur schreiben, Text kopieren oder am Handy tippen.\n\nAlles speichert sich vollautomatisch!" }
     };
     
     let currentFileName = Object.keys(allFiles)[0] || "Willkommen";
@@ -294,8 +294,6 @@
     function renderFileList() {
       fileListContainer.innerHTML = "";
       const fileNames = Object.keys(allFiles);
-      
-      // Zeigt immer bis zu 5 Dateien passend zum Scroll-Index an
       const visibleFiles = fileNames.slice(fileScrollIndex, fileScrollIndex + 5);
       
       visibleFiles.forEach((name) => {
@@ -322,7 +320,6 @@
 
     textarea.addEventListener('input', saveCurrentText);
 
-    // SCROLLEN DER LISTE
     document.getElementById('btn-file-up').addEventListener('click', () => {
       if (fileScrollIndex > 0) { fileScrollIndex--; renderFileList(); }
     });
@@ -330,7 +327,6 @@
       if (fileScrollIndex < Object.keys(allFiles).length - 5) { fileScrollIndex++; renderFileList(); }
     });
 
-    // NAVIGATION
     document.getElementById('btn-next').addEventListener('click', () => {
       saveCurrentText();
       currentPage++;
@@ -353,7 +349,6 @@
       }
     });
 
-    // AKTIONEN
     document.getElementById('btn-new-file').addEventListener('click', () => {
       saveCurrentText();
       let name = prompt("Name für neue Datei:", "Notiz_" + (Object.keys(allFiles).length + 1));
@@ -398,7 +393,6 @@
       }
     });
 
-    // BACKUP MANAGEMENT
     document.getElementById('btn-export').addEventListener('click', () => {
       saveCurrentText();
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allFiles));
