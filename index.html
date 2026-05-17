@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notizbuch OS - Flat Web Edition</title>
+  <title>Notizbuch OS - VR & Flat Edition</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2ecc71">
   
@@ -36,31 +36,32 @@
 
     #hidden-file-input { display: none; }
 
-    /* LINKES PANEL: REINE 2D SIDEBAR */
+    /* OPTIMIERT FÜR VR: Flexiblere Sidebar */
     #sidebar {
-      width: 320px;
+      width: 280px; /* Leicht schmaler für bessere Übersicht im VR-Fokus */
       background-color: var(--panel-bg);
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 15px;
       box-shadow: 4px 0 15px rgba(0,0,0,0.3);
       z-index: 10;
+      height: 100%;
     }
 
     .sidebar-title {
       text-align: center;
       color: #1abc9c;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       letter-spacing: 1px;
     }
 
     .scroll-controls {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 15px;
-      gap: 10px;
+      margin-bottom: 10px;
+      gap: 8px;
     }
 
     .scroll-btn {
@@ -68,27 +69,28 @@
       background-color: var(--btn-primary);
       color: white;
       border: none;
-      padding: 10px;
+      padding: 8px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
 
+    /* WICHTIG: Die Liste nimmt jetzt den restlichen Platz flexibel ein */
     #file-list {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       overflow-y: auto;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      min-height: 100px; /* Garantiert, dass die Liste Platz behält */
     }
 
-    /* DATEINAMEN-STYLING: Garantiert perfekt lesbar */
     .file-item {
       background-color: var(--btn-primary);
-      color: #ffffff; /* Strahlend weißer Text */
-      padding: 14px;
+      color: #ffffff;
+      padding: 10px;
       text-align: center;
       border-radius: 6px;
       cursor: pointer;
@@ -97,7 +99,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1rem;
       border: 1px solid rgba(255,255,255,0.1);
     }
 
@@ -110,20 +112,22 @@
       border-color: #d35400;
     }
 
+    /* Kompakteres Button-Layout für VR-Controller-Bedienung */
     .action-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      margin-top: auto; /* Schiebt die Buttons nach unten */
     }
 
     .btn {
       color: white;
       border: none;
-      padding: 12px;
+      padding: 10px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 0.9rem;
       text-align: center;
       transition: opacity 0.2s;
     }
@@ -135,22 +139,22 @@
     
     .horizontal-split {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
     .horizontal-split .btn { flex: 1; }
 
     .divider {
-      height: 2px;
+      height: 1px;
       background-color: #7f8c8d;
-      margin: 10px 0;
+      margin: 5px 0;
     }
 
-    /* RECHTES PANEL: REINES SEITEN-LAYOUT */
+    /* RECHTES PANEL */
     #main-content {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      padding: 40px;
+      padding: 20px;
       align-items: center;
       justify-content: center;
     }
@@ -160,19 +164,18 @@
       max-width: 800px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 15px;
     }
 
-    /* DAS DIGITALE PAPIER (Flach, mit Scrollbalken falls nötig) */
     #paper {
       background-color: var(--paper-bg);
       color: #111;
       border-radius: 8px;
-      padding: 30px;
+      padding: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      height: 65vh;
+      height: 70vh;
     }
 
     .paper-header {
@@ -180,31 +183,30 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     #current-file-title {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       color: #e67e22;
       font-weight: bold;
     }
 
     #page-number {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #555;
       font-weight: bold;
     }
 
-    /* NORMALES TEXTFELD FÜR PC/HANDY-TASTATUR */
     #note-textarea {
       width: 100%;
       flex-grow: 1;
       background: transparent;
       border: none;
       resize: none;
-      font-size: 1.25rem;
-      line-height: 1.6;
+      font-size: 1.1rem;
+      line-height: 1.5;
       font-family: 'Segoe UI', Arial, sans-serif;
       color: #111;
       outline: none;
@@ -213,7 +215,7 @@
     .nav-controls {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
+      gap: 15px;
     }
     .nav-controls .btn {
       flex: 1;
@@ -294,7 +296,9 @@
     function renderFileList() {
       fileListContainer.innerHTML = "";
       const fileNames = Object.keys(allFiles);
-      const visibleFiles = fileNames.slice(fileScrollIndex, fileScrollIndex + 5);
+      
+      // Berechnet dynamisch, wie viele Dateien basierend auf der Höhe reinpassen
+      const visibleFiles = fileNames.slice(fileScrollIndex, fileScrollIndex + 4);
       
       visibleFiles.forEach((name) => {
         const item = document.createElement('div');
@@ -324,7 +328,7 @@
       if (fileScrollIndex > 0) { fileScrollIndex--; renderFileList(); }
     });
     document.getElementById('btn-file-down').addEventListener('click', () => {
-      if (fileScrollIndex < Object.keys(allFiles).length - 5) { fileScrollIndex++; renderFileList(); }
+      if (fileScrollIndex < Object.keys(allFiles).length - 4) { fileScrollIndex++; renderFileList(); }
     });
 
     document.getElementById('btn-next').addEventListener('click', () => {
